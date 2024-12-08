@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -6,19 +7,23 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using TradeX.Domain.Abstractions;
+using TradeX.Domain.FutureOrders;
+using TradeX.Domain.SpotOrders;
 using TradeX.Domain.Subscriptions;
+using TradeX.Domain.Subscriptions.Events;
 using TradeX.Domain.Users.Events;
 
 namespace TradeX.Domain.Users
 {
     public class User : AggregateRoot
     {
-        private readonly List<Guid> _orders = new();
+        private readonly List<Guid> _spotOrders = new();
+        private readonly List<Guid> _futureOrders = new();
         private readonly List<Asset> _assets = new();
-        private readonly List<Alert> _alerts = new();
 
-        private User(Guid id, string firstName , string lastName , string email , string password,
-            DateTime createdOn , PaymentMethod paymentMethod ) : base(id)
+
+        private User(Guid id, string firstName, string lastName, string email, string password,
+            DateTime createdOn, PaymentMethod paymentMethod) : base(id)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -28,7 +33,7 @@ namespace TradeX.Domain.Users
             balance = new Balance();
             PaymentMethod = paymentMethod;
             KYC_Confirmed = false;
-            performanceMetrics = new UserPerformanceMetrics(0, 0, 0 ,0);
+            performanceMetrics = new UserPerformanceMetrics(0, 0, 0, 0);
         }
 
         public string FirstName { get; private set; } = null!;
@@ -43,8 +48,8 @@ namespace TradeX.Domain.Users
         public UserPerformanceMetrics performanceMetrics { get; private set; }
 
         public IReadOnlyList<Asset> Assets => _assets.ToList();
-        public IReadOnlyList<Guid> Orders => _orders.ToList();
-        public IReadOnlyList<Alert> Alerts => _alerts.ToList();
+        public IReadOnlyList<Guid> SpotOrders => _spotOrders;
+        public IReadOnlyList<Guid> FutureOrders => _futureOrders;
 
         public static User Create(string firstName, string lastName, string email, string password,
             DateTime createdOn, PaymentMethod paymentMethod)
@@ -52,44 +57,45 @@ namespace TradeX.Domain.Users
             return new User(Guid.NewGuid(), firstName, lastName, email, password, createdOn, paymentMethod);
         }
 
-        public Result RequestPaymentMethodConfirmation()
+        public Result RequestKYCConfirmation()
         {
-            if(KYC_Confirmed)
-                return Result.Failure(UserErrors.PaymentMethodAlreadyConfirmed);
+            if (KYC_Confirmed)
+                return Result.Failure(UserErrors.KYCAlreadyConfirmed);
 
-            RaiseDomainEvent(new PaymentMethodConfirmationRequestedDomainEvent(Id));
+            RaiseDomainEvent(new KYCVerificationRequested(Id));
             return Result.Success();
         }
 
-        public Result ConfirmPaymentMethod()
+        public Result ConfirmKYC()
         {
             if (KYC_Confirmed)
-                return Result.Failure(UserErrors.PaymentMethodAlreadyConfirmed);
+                return Result.Failure(UserErrors.KYCAlreadyConfirmed);
 
-            RaiseDomainEvent(new PaymentMethodConfirmedDomainEvent(Id));
+            KYC_Confirmed = true;
+            RaiseDomainEvent(new KYCRequestConfirmed(Id));
             return Result.Success();
         }
 
         public Result SetSubscription(Subscription subscription)
         {
             if (!KYC_Confirmed)
-                return Result.Failure(UserErrors.PaymentMethodNotConfirmed);
+                return Result.Failure(UserErrors.KYCNotConfirmed);
             if (SubscriptionId is not null)
                 return Result.Failure(UserErrors.SubcriptionAlreadyActive);
-            if (balance.AvailableBalance < subscription.Price)
+            if (balance.AvailableBalance < subscription.GetPrice())
                 return Result.Failure(UserErrors.NoEnoughFunds);
 
 
             SubscriptionId = subscription.Id;
-            balance -= subscription.Price;
-            RaiseDomainEvent(new SubscriptionBoughtDomainEvent(Id,subscription));
+            balance -= subscription.GetPrice();
+            RaiseDomainEvent(new SubscriptionSet(subscription));
             return Result.Success();
         }
 
         public Result Deposit(decimal amount)
         {
-            if(!KYC_Confirmed)
-                return Result.Failure(UserErrors.PaymentMethodNotConfirmed);
+            if (!KYC_Confirmed)
+                return Result.Failure(UserErrors.KYCNotConfirmed);
 
             balance += amount;
             return Result.Success();
@@ -98,73 +104,127 @@ namespace TradeX.Domain.Users
         public Result Withdraw(decimal amount)
         {
             if (!KYC_Confirmed)
-                return Result.Failure(UserErrors.PaymentMethodNotConfirmed);
-            if(balance.AvailableBalance < amount)
-                return Result.Failure(UserErrors.NoEnoughFunds);
-
-            balance -= amount;
-            return Result.Success();
-        }
-
-        public Result Transfer(decimal amount , User user)
-        {
-            if (!KYC_Confirmed || !user.KYC_Confirmed)
-                return Result.Failure(UserErrors.PaymentMethodNotConfirmed);
+                return Result.Failure(UserErrors.KYCNotConfirmed);
             if (balance.AvailableBalance < amount)
                 return Result.Failure(UserErrors.NoEnoughFunds);
 
             balance -= amount;
-            user.balance += amount;
-            RaiseDomainEvent(new MoneyTransferredDomainEvent(Id, user.Id));
             return Result.Success();
         }
 
-        public Result AddAlert(Alert alert , Subscription subscription)
+        public Result Freeze(decimal amount)
         {
-            if (_alerts.Count > subscription.MaxAlerts)
-                return Result.Failure(UserErrors.ExceededAlertLimit);
+            if (!KYC_Confirmed)
+                return Result.Failure(UserErrors.KYCNotConfirmed);
 
-            _alerts.Add(alert);
+            balance = balance.Freeze(amount);
             return Result.Success();
         }
 
-        public Result RemoveAlert(Alert alert)
+        public Result UnFreeze(decimal amount)
         {
-            if (_alerts.Contains(alert))
-                return Result.Failure(UserErrors.AlertNotFound);
+            if (!KYC_Confirmed)
+                return Result.Failure(UserErrors.KYCNotConfirmed);
 
-            _alerts.Remove(alert);
+            balance = balance.UnFreeze(amount);
             return Result.Success();
         }
 
-        public Result AddAsset(Guid assetId , decimal amount)
+        public Result Transfer(decimal amount, User receiver)
         {
-            var asset = _assets.FirstOrDefault(x=> x.Id == assetId);
-            if (asset is null)
-            {
-               _assets.Add(Asset.Create(assetId, amount));
-            }
+            if (!KYC_Confirmed || !receiver.KYC_Confirmed)
+                return Result.Failure(UserErrors.KYCNotConfirmed);
+            if (balance.AvailableBalance < amount)
+                return Result.Failure(UserErrors.NoEnoughFunds);
+
+            balance -= amount;
+            receiver.balance += amount;
+            return Result.Success();
+        }
+
+        public void AddAsset(Guid cryptoId, decimal amount)
+        {
+            var oldAsset = _assets.FirstOrDefault(x => x.CryptoId == cryptoId);
+
+            if (oldAsset is null)
+                _assets.Add(Asset.Create(cryptoId,amount));
             else
-            {
-                asset.Add(amount);
-            }
-            return Result.Success();
+                oldAsset.Add(amount);
         }
 
-        public Result RemoveAsset(Guid assetId, decimal amount)
+        public Result RemoveAsset(Guid cryptoId, decimal amount)
         {
-            var asset = _assets.FirstOrDefault(x => x.Id == assetId);
+            var asset = _assets.FirstOrDefault(x => x.CryptoId == cryptoId);
+
             if (asset is null)
                 return Result.Failure(UserErrors.AssetNotFound);
 
-            if(asset.Amount < amount)
+            if (asset.Amount < amount)
                 return Result.Failure(UserErrors.NoEnoughFunds);
 
             asset.Sub(amount);
             return Result.Success();
         }
 
+        public Result AddOrder(IOrder order)
+        {
+            if (order is SpotOrder)
+            {
+                if (_spotOrders.Contains(order.Id))
+                    return Result.Failure(UserErrors.OrderAlreadyExist);
+                _spotOrders.Add(order.Id);
+            }
+            else
+            {
+                if (_futureOrders.Contains(order.Id))
+                    return Result.Failure(UserErrors.OrderAlreadyExist);
+                _futureOrders.Add(order.Id);
+            }
+            return Result.Success();
+        }
+        
+        public Result RemoveOrder(IOrder order)
+        {
+            if (order is SpotOrder)
+            {
+                if (!_spotOrders.Contains(order.Id))
+                    return Result.Failure(UserErrors.OrderNotFound);
+                _spotOrders.Remove(order.Id);
+            }
+            else
+            {
+                if (!_futureOrders.Contains(order.Id))
+                    return Result.Failure(UserErrors.OrderNotFound);
+                _futureOrders.Remove(order.Id);
+            }
+            return Result.Success();
+        }
 
+        public bool CanAffordOrder(IOrder order , OrderDetails orderDetails)
+        {
+            if (order is SpotOrder spotOrder)
+            {
+                if (spotOrder.OrderType == SpotOrderType.Buy)
+                {
+                    if (balance.AvailableBalance < orderDetails.Total)
+                        return false;
+                }
+                else
+                {
+                    var asset = Assets.FirstOrDefault(x => x.CryptoId == spotOrder.CryptoId);
+                    if (asset is null || asset.Amount < spotOrder.Amount)
+                        return false;
+                }
+            }
+
+            if (order is FutureOrder futureOrder)
+            {
+                if (balance.AvailableBalance < orderDetails.Total)
+                    return false;
+            }
+
+            return true;
+        }
 
 #pragma warning disable
         private User() { }

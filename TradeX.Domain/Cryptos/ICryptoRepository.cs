@@ -10,5 +10,11 @@ namespace TradeX.Domain.Cryptos
     public interface ICryptoRepository
     {
         Task<Crypto?> GetByIdAsync(Guid id);
+
+        Task<Crypto?> GetBySymbolAsync(string symbol);
+
+        Task<bool> IsSymbolUnique(string symbol);
+
+        void Add(Crypto crypto);
     }
 }

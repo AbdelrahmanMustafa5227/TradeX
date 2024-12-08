@@ -10,6 +10,7 @@ namespace TradeX.Domain.Abstractions
     public class Result
     {
         public bool IsSuccess { get; private set; }
+        public bool IsFailure => !IsSuccess;
         public Error? Error { get; private set; }
 
         protected Result(bool isSuccess, Error? error)
@@ -22,7 +23,7 @@ namespace TradeX.Domain.Abstractions
         public static Result Success() => new Result(true, Error.None);
 
         public static Result<T> Failure<T>(Error error) => new Result<T>(false,error, default);
-        public static Result<T> Success<T>(T value) => new Result<T>(false, Error.None , value);
+        public static Result<T> Success<T>(T value) => new Result<T>(true, Error.None , value);
 
         public static Result<T> Create<T>(T value) => value is not null ? Success<T>(value) : Failure<T>(Error.Null);
 
@@ -38,7 +39,7 @@ namespace TradeX.Domain.Abstractions
         }
 
         [NotNull]
-        public T Value => IsSuccess ? _value! : throw new InvalidOperationException();
+        public T Value => IsSuccess ? _value! : throw new InvalidOperationException()!;
 
         public static implicit operator Result<T>(T value) => Create<T>(value);
         

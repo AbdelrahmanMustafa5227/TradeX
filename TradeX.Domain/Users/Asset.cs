@@ -11,7 +11,8 @@ namespace TradeX.Domain.Users
     {
         public Guid CryptoId { get; private set; }
         public decimal Amount { get; private set; }
-        
+        public decimal Freezed {  get; private set; }
+        public decimal Available => Amount - Freezed;
         
         private Asset(Guid Id ,Guid cryptoId , decimal amount) :base(Id)
         {
@@ -20,6 +21,7 @@ namespace TradeX.Domain.Users
 
             CryptoId = cryptoId;
             Amount = amount;
+            Freezed = 0;
         }
 
         public static Asset Create(Guid CryptoId ,decimal Amount)
@@ -36,6 +38,22 @@ namespace TradeX.Domain.Users
         {
             Amount -= amount;
         }
+
+        public void Freeze(decimal amount)
+        {
+            if(amount > Available)
+                throw new DomainException("Total amount Cannot be < amount to be freezed");
+
+            Freezed += amount;
+        }
+
+        public void UnFreeze(decimal amount)
+        {
+            if (amount > Freezed)
+                throw new DomainException("freezed amount Cannot be < amount to be unfreezed");
+            Freezed -= amount;
+        }
+
 
         private Asset()
         {

@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TradeX.Domain.Cryptos;
-using TradeX.Domain.Orders;
+using TradeX.Domain.FutureOrders;
 using TradeX.Domain.Users;
 
 namespace TradeX.Domain.DomainServices
 {
     public class PerformanceMetricsDomainService
     {
-        public UserPerformanceMetrics CalculateUserPerformance(List<Order> userOrders)
+        public UserPerformanceMetrics CalculateUserPerformance(List<FutureOrder> userOrders)
         {
             var closedOrders = userOrders.Where(x => x.ClosedOnUtc is not null).ToList();
 
@@ -36,7 +36,7 @@ namespace TradeX.Domain.DomainServices
 
         }
 
-        public CryptoPerformanceMetrics CalculateCryptoPerformance(List<Order> CryptoOrders)
+        public CryptoPerformanceMetrics CalculateCryptoPerformance(List<FutureOrder> CryptoOrders)
         {
             var transactionsInLast24H = CryptoOrders.Where(x => x.OpenedOnUtc?.Date == DateTime.UtcNow.Date 
                 && (x.IsActive == true || x.ClosedOnUtc != null));

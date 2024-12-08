@@ -10,7 +10,6 @@ namespace TradeX.Domain.Cryptos
 {
     public class Crypto : AggregateRoot
     {
-        private readonly List<Guid> _orders = new();
 
         private Crypto(Guid id , string name , string symbol , decimal price , long totalSupply) : base(id)
         {
@@ -19,7 +18,6 @@ namespace TradeX.Domain.Cryptos
             Price = price;
             PriceLast24H = price;
             TotalSupply = totalSupply;
-            PerformanceMetrics = new CryptoPerformanceMetrics(0);
         }
 
         public string Name { get; private set; }
@@ -29,17 +27,11 @@ namespace TradeX.Domain.Cryptos
         public decimal TradingVolume24H { get; private set; }
         public long TotalSupply { get; private set; }
         public decimal MarketCap => TotalSupply * Price;
-        public CryptoPerformanceMetrics PerformanceMetrics { get; private set; }
-
-        public IReadOnlyList<Guid> Orders => _orders.ToList();
-
 
         public static Crypto Create(string name, string symbol, decimal price, long totalSupply)
         {
             return new Crypto(Guid.NewGuid() , name , symbol , price , totalSupply);
         }
-
-
 
 
 #pragma warning disable

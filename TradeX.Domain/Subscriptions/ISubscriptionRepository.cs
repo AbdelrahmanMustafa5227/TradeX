@@ -13,6 +13,9 @@ namespace TradeX.Domain.Subscriptions
 
         Task<Subscription?> GetByIdAsync(Guid id);
 
+        Task<Subscription?> GetByUserIdAsync(Guid userId);
+
         Task<List<Subscription>> GetAllAsync();
+
     }
 }

@@ -13,5 +13,7 @@ namespace TradeX.Domain.Users
 
         Task<User?> GetByIdAsync (Guid id);
 
+        Task<bool> IsEmailUnique(string email);
+
     }
 }

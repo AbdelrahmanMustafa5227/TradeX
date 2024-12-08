@@ -1,0 +1,1 @@
+﻿global using TradeX.Application.Abstractions.Messaging;
