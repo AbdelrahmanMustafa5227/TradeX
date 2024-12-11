@@ -3,6 +3,7 @@ using TradeX.Application.SpotOrders.Commands.CancelSpotOrder;
 using TradeX.Application.SpotOrders.Commands.ChangeEntryPrice;
 using TradeX.Application.SpotOrders.Commands.CreateLimitSpotOrder;
 using TradeX.Application.SpotOrders.Commands.CreateMarketSpotOrder;
+using TradeX.Application.SpotOrders.Commands.ExecuteLimitOrder;
 using TradeX.Application.SpotOrders.Commands.ModifySpotOrder;
 
 namespace TradeX.Api.Mapping
@@ -58,7 +59,13 @@ namespace TradeX.Api.Mapping
                 request.Amount
             );
         }
-
-
+        
+        public static ExecuteLimitOrderCommand ToCommand(this ExecuteLimitOrderRequest request)
+        {
+            return new ExecuteLimitOrderCommand
+            (
+                request.OrderId
+            );
+        }
     }
 }

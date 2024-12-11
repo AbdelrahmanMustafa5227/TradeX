@@ -12,10 +12,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TradeX.Application.Abstractions;
 using TradeX.Domain.Abstractions;
-using TradeX.Infrastructure.Migrations;
 using TradeX.Infrastructure.Persistance;
 
-namespace TradeX.Infrastructure.Outbox
+namespace TradeX.Infrastructure.BackgroundJobs.Outbox
 {
     [DisallowConcurrentExecution]
     internal class OutboxJob : IJob
@@ -38,10 +37,10 @@ namespace TradeX.Infrastructure.Outbox
 
         public async Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation("Beginning to process outbox messages");  
+            _logger.LogInformation("Beginning to process outbox messages");
             var outboxMessages = await GetOutboxMessagesAsync();
 
-            if(outboxMessages.Count > 0)
+            if (outboxMessages.Count > 0)
             {
                 using var transaction = _db.Database.BeginTransaction();
 
@@ -72,7 +71,7 @@ namespace TradeX.Infrastructure.Outbox
         }
 
         private Task<List<OutboxMessage>> GetOutboxMessagesAsync()
-        {     
+        {
             var outboxMessages = _db.Set<OutboxMessage>()
                 .Where(x => x.ProcessedOnUtc == null)
                 .OrderBy(x => x.OccurredOnUtc)
@@ -82,7 +81,7 @@ namespace TradeX.Infrastructure.Outbox
             return outboxMessages;
         }
 
-        private void UpdateOutboxMessageAsync(OutboxMessage outboxMessage,  Exception? exception)
+        private void UpdateOutboxMessageAsync(OutboxMessage outboxMessage, Exception? exception)
         {
             outboxMessage.ProcessedOnUtc = _dateTimeProvider.UtcNow;
             outboxMessage.Error = exception?.Message;

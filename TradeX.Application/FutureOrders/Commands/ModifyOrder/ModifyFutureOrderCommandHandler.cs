@@ -14,7 +14,7 @@ using TradeX.Domain.Users;
 
 namespace TradeX.Application.FutureOrders.Commands.ModifyOrder
 {
-    internal class ModifyOrderCommandHandler : ICommandHandler<ModifyOrderCommand>
+    internal class ModifyOrderCommandHandler : ICommandHandler<ModifyFutureOrderCommand>
     {
         private readonly IFutureOrderRepository _orderRepository;
         private readonly IUserRepository _userRepository;
@@ -33,11 +33,11 @@ namespace TradeX.Application.FutureOrders.Commands.ModifyOrder
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<Result> Handle(ModifyOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ModifyFutureOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
             if (order is null)
-                return Result.Failure(OrderErrors.OrderNotFound);
+                return Result.Failure(FutureOrderErrors.OrderNotFound);
 
             var user = await _userRepository.GetByIdAsync(order.UserId);
             if (user is null)
@@ -47,21 +47,22 @@ namespace TradeX.Application.FutureOrders.Commands.ModifyOrder
             if (subscription is null)
                 return Result.Failure(SubscriptionErrors.SubscriptionNotFound);
 
-            var ModifyOrderResult = order.ModifyOrder(request.OrderType, request.Amount);
+
+            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(order.EntryPrice ,request.Amount , subscription, _dateTimeProvider.UtcNow);
+
+
+            if (!user.CanAffordOrder(orderDetails))
+                return Result.Failure(UserErrors.NoEnoughFunds);
+
+            if (subscription.GetTradingVolumeLimit(_dateTimeProvider.UtcNow) < subscription.ComulativeTradingVolume24H + orderDetails.Volume)
+                return Result.Failure(SubscriptionErrors.ExceededDailyTradingVolumeLimit);
+
+
+            var ModifyOrderResult = order.ModifyOrder(request.Amount , orderDetails);
             if (!ModifyOrderResult.IsSuccess)
                 return ModifyOrderResult;
 
 
-            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(order, subscription, _dateTimeProvider.UtcNow);
-
-
-            bool canAfford = user.CanAffordOrder(order,orderDetails);
-            if (!canAfford)
-                return Result.Failure(UserErrors.NoEnoughFunds);
-
-            order.UpdatePricing(orderDetails);
-
-            await _orderRepository.Update(order);
             await _unitOfWork.SaveChangesAsync();
             return ModifyOrderResult;
         }

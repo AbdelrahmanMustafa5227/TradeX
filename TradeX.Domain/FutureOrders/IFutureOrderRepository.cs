@@ -23,7 +23,7 @@ namespace TradeX.Domain.FutureOrders
 
         Task<List<FutureOrder>> GetOpenByCryptoIdAsync(Guid cryptoId);
 
-        Task Remove(FutureOrder order);
+        void Remove(FutureOrder order);
 
         Task Update(FutureOrder order);
     }

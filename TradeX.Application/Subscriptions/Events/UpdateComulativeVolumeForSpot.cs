@@ -5,17 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TradeX.Domain.Abstractions;
+using TradeX.Domain.FutureOrders.Events;
 using TradeX.Domain.SpotOrders.Events;
 using TradeX.Domain.Subscriptions;
 
 namespace TradeX.Application.Subscriptions.Events
 {
-    internal class UpdateComulativeVolumeHandler : INotificationHandler<MarketSpotOrderExecuted>
+    internal class UpdateComulativeVolumeForSpot : INotificationHandler<MarketSpotOrderExecuted>
     {
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateComulativeVolumeHandler(ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork)
+        public UpdateComulativeVolumeForSpot(ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork)
         {
             _subscriptionRepository = subscriptionRepository;
             _unitOfWork = unitOfWork;

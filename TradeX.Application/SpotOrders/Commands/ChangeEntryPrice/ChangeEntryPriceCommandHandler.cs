@@ -37,7 +37,7 @@ namespace TradeX.Application.SpotOrders.Commands.ChangeEntryPrice
         {
             var order = await _spotOrderRepository.GetByIdAsync(request.OrderId);
             if (order is null)
-                return Result.Failure(OrderErrors.OrderNotFound);
+                return Result.Failure(SpotOrderErrors.SpotOrderNotFound);
 
             var subscription = await _subscriptionRepository.GetByUserIdAsync(order.UserId);
             if (subscription is null)
@@ -48,20 +48,20 @@ namespace TradeX.Application.SpotOrders.Commands.ChangeEntryPrice
                 return Result.Failure(UserErrors.UserNotFound);
 
 
-            var SetEntryPriceResult = order.SetEntryPrice(request.EntryPrice);
-            if (SetEntryPriceResult.IsFailure)
-                return SetEntryPriceResult;
+            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(request.EntryPrice, order.Amount,
+                                subscription, _dateTimeProvider.UtcNow, order.OrderType == SpotOrderType.Sell, order.CryptoId);
 
 
-            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(order, subscription, _dateTimeProvider.UtcNow);
-
-            if (!user.CanAffordOrder(order, orderDetails))
+            if (!user.CanAffordOrder(orderDetails))
                 return Result.Failure(UserErrors.NoEnoughFunds);
 
             if (subscription.GetTradingVolumeLimit(_dateTimeProvider.UtcNow) < subscription.ComulativeTradingVolume24H + orderDetails.Volume)
                 return Result.Failure(SubscriptionErrors.ExceededDailyTradingVolumeLimit);
 
-            order.UpdatePricing(orderDetails);
+
+            var SetEntryPriceResult = order.SetEntryPrice(request.EntryPrice, orderDetails);
+            if (SetEntryPriceResult.IsFailure)
+                return SetEntryPriceResult;
 
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();

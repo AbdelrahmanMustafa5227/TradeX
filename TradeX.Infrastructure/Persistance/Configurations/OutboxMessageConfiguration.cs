@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TradeX.Infrastructure.Outbox;
+using TradeX.Infrastructure.BackgroundJobs.Outbox;
 
 namespace Bookify.Infrastructure.Configurations;
 

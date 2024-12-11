@@ -28,8 +28,6 @@ namespace TradeX.Application.Users.Events
             if (user == null)
                 return;
 
-            if(!user.SpotOrders.Contains(notification.Order.Id))
-                user.AddOrder(notification.Order);
 
             if (notification.Order.OrderType == SpotOrderType.Buy)
             {

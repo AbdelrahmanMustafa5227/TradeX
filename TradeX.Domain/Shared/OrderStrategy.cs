@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TradeX.Application.FutureOrders.Commands.OpenOrder
+namespace TradeX.Domain.Shared
 {
-    internal record OpenOrderCommand(Guid OrderId) : ICommand
+    public enum OrderStrategy
     {
+        Spot = 0,
+        Future = 1
     }
 }

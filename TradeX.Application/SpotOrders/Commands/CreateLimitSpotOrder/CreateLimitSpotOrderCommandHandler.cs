@@ -53,18 +53,20 @@ namespace TradeX.Application.SpotOrders.Commands.CreateLimitSpotOrder
                 return Result.Failure(CryptoErrors.CryptoNotFound);
 
 
-            var order = SpotOrder.Create(request.UserId, request.CryptoId, request.orderType, request.Amount , request.EntryPrice);
-            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(order, subscription, _dateTimeProvider.UtcNow);
+            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(request.EntryPrice, request.Amount,
+                    subscription, _dateTimeProvider.UtcNow, request.orderType == SpotOrderType.Sell, request.CryptoId);
 
 
-            bool canAfford = user.CanAffordOrder(order, orderDetails);
-            if (!canAfford)
+            if (!user.CanAffordOrder(orderDetails))
                 return Result.Failure(UserErrors.NoEnoughFunds);
 
             if (subscription.GetTradingVolumeLimit(_dateTimeProvider.UtcNow) < subscription.ComulativeTradingVolume24H + orderDetails.Volume)
                 return Result.Failure(SubscriptionErrors.ExceededDailyTradingVolumeLimit);
 
-            order.UpdatePricing(orderDetails);
+
+            var order = SpotOrder.PlaceLimit(request.UserId, request.CryptoId, request.orderType, request.Amount, request.EntryPrice,
+                orderDetails.Fees , orderDetails.Total);
+
 
             _spotOrderRepository.Add(order);
             await _unitOfWork.SaveChangesAsync();

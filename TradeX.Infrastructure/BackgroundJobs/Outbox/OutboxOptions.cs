@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TradeX.Infrastructure.Outbox
+namespace TradeX.Infrastructure.BackgroundJobs.Outbox
 {
     internal class OutboxOptions
     {

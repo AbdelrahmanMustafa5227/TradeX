@@ -79,9 +79,9 @@ namespace TradeX.Domain.Subscriptions
             ComulativeTradingVolume24H += volume;
         }
 
-        public bool CheckValidity(DateTime now)
+        public bool CheckValidity(DateOnly today)
         {
-            if(DateOnly.FromDateTime(now) >= EndDate)
+            if(today >= EndDate)
                 IsVaild = false;
             return IsVaild;
         }

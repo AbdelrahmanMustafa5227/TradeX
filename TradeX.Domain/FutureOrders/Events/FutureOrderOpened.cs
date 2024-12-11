@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TradeX.Domain.Abstractions;
+using TradeX.Domain.FutureOrders;
 
-namespace TradeX.Domain.SpotOrders.Events
+namespace TradeX.Domain.Orders.Events
 {
-    public record SpotOrderCreated(SpotOrder Order) : IDomainEvent
+    public record FutureOrderOpened(FutureOrder order) : IDomainEvent
     {
 
     }

@@ -14,10 +14,13 @@ using TradeX.Domain.FutureOrders;
 using TradeX.Domain.SpotOrders;
 using TradeX.Domain.Subscriptions;
 using TradeX.Domain.Users;
+using TradeX.Infrastructure.Abstractions;
+using TradeX.Infrastructure.BackgroundJobs;
+using TradeX.Infrastructure.BackgroundJobs.Outbox;
 using TradeX.Infrastructure.ExternalServices;
-using TradeX.Infrastructure.Outbox;
 using TradeX.Infrastructure.Persistance;
 using TradeX.Infrastructure.Persistance.Repositories;
+using TradeX.Infrastructure.Services;
 
 namespace TradeX.Infrastructure
 {
@@ -29,6 +32,7 @@ namespace TradeX.Infrastructure
 
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IDateTimeProvider, DateTimeProvider>();
+            services.AddScoped<IRandomNumberProvider, RandomNumberProvider>();
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
@@ -41,7 +45,7 @@ namespace TradeX.Infrastructure
             services.Configure<OutboxOptions>(configuration.GetSection(OutboxOptions.SectionName));
             services.AddQuartz();
             services.AddQuartzHostedService(options => options.WaitForJobsToComplete =  true);
-            services.ConfigureOptions<OutboxJobSetup>();
+            services.ConfigureOptions<QuartzSetup>();
 
 
             return services;

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TradeX.Application.Abstractions;
 using TradeX.Domain.Abstractions;
-using TradeX.Domain.Cryptos;
 using TradeX.Domain.DomainServices;
 using TradeX.Domain.FutureOrders;
 using TradeX.Domain.SpotOrders;
@@ -37,7 +36,7 @@ namespace TradeX.Application.SpotOrders.Commands.ModifySpotOrder
         {
             var order = await _spotOrderRepository.GetByIdAsync(request.OrderId);
             if (order is null)
-                return Result.Failure(OrderErrors.OrderNotFound);
+                return Result.Failure(SpotOrderErrors.SpotOrderNotFound);
 
             var subscription = await _subscriptionRepository.GetByUserIdAsync(order.UserId);
             if (subscription is null)
@@ -47,23 +46,21 @@ namespace TradeX.Application.SpotOrders.Commands.ModifySpotOrder
             if (user is null)
                 return Result.Failure(UserErrors.UserNotFound);
 
-            var oldAmount = order.Amount;
 
-            var ModifyOrderResult = order.ModifyOrder(request.orderType, request.Amount);
-            if(!ModifyOrderResult.IsSuccess)
-                return ModifyOrderResult;
+            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(order.EntryPrice , request.Amount, subscription,
+                                _dateTimeProvider.UtcNow , request.orderType == SpotOrderType.Sell , order.CryptoId);
 
 
-            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(order, subscription, _dateTimeProvider.UtcNow);
-
-
-            if(!user.CanAffordOrder(order, orderDetails))
+            if(!user.CanAffordOrder(orderDetails))
                 return Result.Failure(UserErrors.NoEnoughFunds);
 
             if (subscription.GetTradingVolumeLimit(_dateTimeProvider.UtcNow) < subscription.ComulativeTradingVolume24H + orderDetails.Volume)
                 return Result.Failure(SubscriptionErrors.ExceededDailyTradingVolumeLimit);
 
-            order.UpdatePricing(oldAmount, orderDetails);
+
+            var ModifyOrderResult = order.ModifyOrder(request.Amount , orderDetails);
+            if (!ModifyOrderResult.IsSuccess)
+                return ModifyOrderResult;
 
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();

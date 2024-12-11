@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TradeX.Domain.Abstractions;
 using TradeX.Domain.FutureOrders;
+using TradeX.Domain.Shared;
 using TradeX.Domain.SpotOrders;
 using TradeX.Domain.Subscriptions;
 using TradeX.Domain.Subscriptions.Events;
@@ -200,24 +201,15 @@ namespace TradeX.Domain.Users
             return Result.Success();
         }
 
-        public bool CanAffordOrder(IOrder order , OrderDetails orderDetails)
+        public bool CanAffordOrder(OrderDetails orderDetails)
         {
-            if (order is SpotOrder spotOrder)
+            if (orderDetails.IsSpotSellOrder)
             {
-                if (spotOrder.OrderType == SpotOrderType.Buy)
-                {
-                    if (balance.AvailableBalance < orderDetails.Total)
-                        return false;
-                }
-                else
-                {
-                    var asset = Assets.FirstOrDefault(x => x.CryptoId == spotOrder.CryptoId);
-                    if (asset is null || asset.Amount < spotOrder.Amount)
-                        return false;
-                }
+                var asset = Assets.FirstOrDefault(x => x.CryptoId == orderDetails.CryptoId);
+                if (asset is null || asset.Amount < orderDetails.Amount)
+                    return false;
             }
-
-            if (order is FutureOrder futureOrder)
+            else
             {
                 if (balance.AvailableBalance < orderDetails.Total)
                     return false;

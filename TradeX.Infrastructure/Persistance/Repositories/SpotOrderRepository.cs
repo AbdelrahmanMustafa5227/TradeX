@@ -1,4 +1,5 @@
 ﻿using Bookify.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +27,9 @@ namespace TradeX.Infrastructure.Persistance.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<SpotOrder>> GetAllOpenOrdersAsync()
+        public async Task<List<SpotOrder>> GetAllOpenOrdersAsync()
         {
-            throw new NotImplementedException();
+            return await DbSet.Where(x => x.ExecutedOnUtc == null).ToListAsync();
         }
 
         public Task<List<SpotOrder>> GetOpenByCryptoIdAsync(Guid cryptoId)

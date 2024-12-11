@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TradeX.Application.Abstractions;
 using TradeX.Domain.Abstractions;
-using TradeX.Infrastructure.Outbox;
+using TradeX.Infrastructure.BackgroundJobs.Outbox;
 
 namespace TradeX.Infrastructure.Persistance
 {

@@ -22,8 +22,4 @@
     <ProjectReference Include="..\TradeX.Application\TradeX.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="BackgroundJobs\" />
-  </ItemGroup>
-
 </Project>

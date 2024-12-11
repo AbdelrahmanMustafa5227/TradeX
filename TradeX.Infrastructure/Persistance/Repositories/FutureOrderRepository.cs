@@ -40,9 +40,9 @@ namespace TradeX.Infrastructure.Persistance.Repositories
             throw new NotImplementedException();
         }
 
-        public Task Remove(FutureOrder order)
+        public void Remove(FutureOrder order)
         {
-            throw new NotImplementedException();
+            DbSet.Remove(order);
         }
 
         public Task Update(FutureOrder order)

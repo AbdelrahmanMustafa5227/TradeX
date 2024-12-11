@@ -16,5 +16,7 @@ namespace TradeX.Domain.Cryptos
         Task<bool> IsSymbolUnique(string symbol);
 
         void Add(Crypto crypto);
+
+        Task<List<Crypto>> GetAllAsync();
     }
 }

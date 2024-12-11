@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TradeX.Domain.Abstractions;
 using TradeX.Domain.Cryptos;
-using TradeX.Domain.FutureOrders;
 using TradeX.Domain.Orders.Events;
+using TradeX.Domain.Shared;
 using TradeX.Domain.SpotOrders.Events;
 using TradeX.Domain.Users;
 
@@ -15,16 +15,17 @@ namespace TradeX.Domain.SpotOrders
     public class SpotOrder : AggregateRoot, IOrder
     {
 
-        private SpotOrder(Guid id, Guid userId, Guid cryptoId, SpotOrderType orderType, decimal amount, decimal entryPrice) : base(id)
+        private SpotOrder(Guid id, Guid userId, Guid cryptoId, SpotOrderType orderType, decimal amount,
+            decimal entryPrice, decimal fees = 0, decimal total = 0, DateTime? executedOn = null) : base(id)
         {
             UserId = userId;
             CryptoId = cryptoId;
             OrderType = orderType;
             Amount = amount;
             EntryPrice = entryPrice;
-            Total = 0;
-            Fees = 0;
-            RaiseDomainEvent(new SpotOrderCreated(this));
+            Total = total;
+            Fees = fees;
+            ExecutedOnUtc = executedOn;
         }
 
         public Guid UserId { get; private set; }
@@ -38,18 +39,22 @@ namespace TradeX.Domain.SpotOrders
         public DateTime? ExecutedOnUtc { get; private set; }
 
 
-        public static SpotOrder Create(Guid userId, Guid cryptoId, SpotOrderType orderType, decimal amount, decimal entryPrice)
+        public static SpotOrder PlaceLimit(Guid userId, Guid cryptoId, SpotOrderType orderType, decimal amount, decimal entryPrice,
+            decimal fees, decimal total)
         {
-            return new SpotOrder(Guid.NewGuid(), userId, cryptoId, orderType, amount, entryPrice);
+            var order = new SpotOrder(Guid.NewGuid(), userId, cryptoId, orderType, amount, entryPrice, fees, total);
+            order.RaiseDomainEvent(new LimitSpotOrderCreated(order));
+            return order;
         }
 
-        public void ExecuteMarketOrder(OrderDetails orderDetails, DateTime dateTime)
+        public static SpotOrder PlaceMarket(Guid userId, Guid cryptoId, SpotOrderType orderType, decimal amount,
+            decimal entryPrice, decimal fees, decimal total, DateTime executedOn)
         {
-            Fees = orderDetails.Fees;
-            Total = orderDetails.Total;
-            ExecutedOnUtc = dateTime;
-            RaiseDomainEvent(new MarketSpotOrderExecuted(this));
+            var order = new SpotOrder(Guid.NewGuid(), userId, cryptoId, orderType, amount, entryPrice, fees, total, executedOn);
+            order.RaiseDomainEvent(new MarketSpotOrderExecuted(order));
+            return order;
         }
+
 
         public void ExecuteLimitOrder(DateTime dateTime)
         {
@@ -58,22 +63,32 @@ namespace TradeX.Domain.SpotOrders
         }
 
 
-        public Result SetEntryPrice(decimal entryPrice)
+        public Result SetEntryPrice(decimal entryPrice , OrderDetails orderDetails)
         {
             if (ExecutedOnUtc is not null)
                 return Result.Failure(SpotOrderErrors.SpotOrderAlreadyExecuted);
 
+            var oldTotal = Total;
+
             EntryPrice = entryPrice;
+            Fees = orderDetails.Fees;
+            Total = orderDetails.Total;
+            RaiseDomainEvent(new SpotOrderPricingChanged(oldTotal, Amount, this));
             return Result.Success();
         }
 
-        public Result ModifyOrder(SpotOrderType orderType, decimal amount)
+        public Result ModifyOrder(decimal amount, OrderDetails orderDetails)
         {
             if (ExecutedOnUtc is not null)
                 return Result.Failure(SpotOrderErrors.SpotOrderAlreadyExecuted);
 
-            OrderType = orderType;
+            var oldTotal = Total;
+            var oldAmount = Amount;
+
             Amount = amount;
+            Fees = orderDetails.Fees;
+            Total = orderDetails.Total;
+            RaiseDomainEvent(new SpotOrderPricingChanged(oldTotal, oldAmount, this));
             return Result.Success();
         }
 
@@ -84,14 +99,6 @@ namespace TradeX.Domain.SpotOrders
 
             RaiseDomainEvent(new SpotOrderCancelled(this));
             return Result.Success();
-        }
-
-        public void UpdatePricing(decimal oldAmount, OrderDetails orderDetails)
-        {
-            var oldTotal = Total;
-            Fees = orderDetails.Fees;
-            Total = orderDetails.Total;
-            RaiseDomainEvent(new SpotOrderPricingChanged(oldTotal, oldAmount, this));
         }
 
         private SpotOrder() { }

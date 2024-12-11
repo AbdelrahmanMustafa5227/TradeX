@@ -15,7 +15,12 @@ namespace TradeX.Infrastructure.Persistance.Repositories
         {
             
         }
-   
+
+        public async Task<List<Crypto>> GetAllAsync()
+        {
+            return await DbSet.ToListAsync();
+        }
+
         public async Task<Crypto?> GetBySymbolAsync(string symbol)
         {
             return await DbSet.FirstOrDefaultAsync(x => x.Symbol == symbol);

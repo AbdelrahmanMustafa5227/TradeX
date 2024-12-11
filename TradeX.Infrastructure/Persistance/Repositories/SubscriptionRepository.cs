@@ -16,14 +16,19 @@ namespace TradeX.Infrastructure.Persistance.Repositories
             
         }
 
-        public Task<List<Subscription>> GetAllAsync()
+        public async Task<List<Subscription>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await DbSet.ToListAsync();
         }
 
         public async Task<Subscription?> GetByUserIdAsync(Guid userId)
         {
             return await DbSet.FirstOrDefaultAsync(x => x.UserId == userId);
+        }
+
+        public void ZeriongAll()
+        {
+             DbSet.ExecuteUpdate(p => p.SetProperty(x => x.ComulativeTradingVolume24H , 0));
         }
     }
 }

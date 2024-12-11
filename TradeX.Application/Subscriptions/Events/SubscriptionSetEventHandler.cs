@@ -15,7 +15,6 @@ namespace TradeX.Application.Subscriptions.Events
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-
         public SubscriptionSetEventHandler(ISubscriptionRepository subscriptionRepository, IUnitOfWork unitOfWork)
         {
             _subscriptionRepository = subscriptionRepository;

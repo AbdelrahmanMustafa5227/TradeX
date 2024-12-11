@@ -30,7 +30,7 @@ namespace TradeX.Application.FutureOrders.Commands.SetTPSLPrice
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
             if (order is null)
-                return Result.Failure(OrderErrors.OrderNotFound);
+                return Result.Failure(FutureOrderErrors.OrderNotFound);
 
             var crypto = await _cryptoRepository.GetByIdAsync(order.CryptoId);
             if (crypto == null)
@@ -38,11 +38,9 @@ namespace TradeX.Application.FutureOrders.Commands.SetTPSLPrice
 
             var result = order.SetStopLoseTakeProfitPrice(crypto, request.TPPrice, request.SLPrice);
 
-            if (!result.IsSuccess)
+            if (result.IsFailure)
                 return result;
 
-
-            await _orderRepository.Update(order);
             await _unitOfWork.SaveChangesAsync();
             return result;
         }

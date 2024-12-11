@@ -17,5 +17,7 @@ namespace TradeX.Domain.Subscriptions
 
         Task<List<Subscription>> GetAllAsync();
 
+        void ZeriongAll();
+
     }
 }

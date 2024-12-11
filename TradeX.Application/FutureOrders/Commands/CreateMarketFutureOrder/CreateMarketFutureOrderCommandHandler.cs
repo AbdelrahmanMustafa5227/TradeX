@@ -52,23 +52,18 @@ namespace TradeX.Application.FutureOrders.Commands.CreateMarketFutureOrder
                 return Result.Failure(SubscriptionErrors.SubscriptionNotFound);
 
 
-            var order = FutureOrder.Set(user, crypto.Id, request.OrderType, request.Amount, request.EntryPrice);
+            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(crypto.Price, request.Amount, subscription, _dateTimeProvider.UtcNow);
 
-            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(order, subscription, _dateTimeProvider.UtcNow);
-
-
-            if (!user.CanAffordOrder(order, orderDetails))
+            if (!user.CanAffordOrder(orderDetails))
                 return Result.Failure(UserErrors.NoEnoughFunds);
 
             if (subscription.GetTradingVolumeLimit(_dateTimeProvider.UtcNow) < subscription.ComulativeTradingVolume24H + orderDetails.Volume)
                 return Result.Failure(SubscriptionErrors.ExceededDailyTradingVolumeLimit);
 
-            order.UpdatePricing(orderDetails);
 
+            var order = FutureOrder.PlaceMarket(user.Id, crypto.Id, request.OrderType, request.Amount, crypto.Price, orderDetails.Fees,
+                orderDetails.Total , _dateTimeProvider.UtcNow);
 
-            var openOrderResult = order.OpenOrder(_dateTimeProvider.UtcNow);
-            if(!openOrderResult.IsSuccess)
-                return openOrderResult;
 
             _orderRepository.Add(order);
             await _unitOfWork.SaveChangesAsync();

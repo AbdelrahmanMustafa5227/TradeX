@@ -7,13 +7,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TradeX.Infrastructure.Outbox
+namespace TradeX.Infrastructure.BackgroundJobs.Outbox
 {
     public class PrivateResolver : DefaultContractResolver
     {
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
-            JsonProperty prop =  base.CreateProperty(member, memberSerialization);
+            JsonProperty prop = base.CreateProperty(member, memberSerialization);
 
             if (!prop.Writable)
             {

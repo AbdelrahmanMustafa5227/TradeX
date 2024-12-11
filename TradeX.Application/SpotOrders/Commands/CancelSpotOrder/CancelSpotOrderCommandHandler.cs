@@ -29,7 +29,7 @@ namespace TradeX.Application.SpotOrders.Commands.CancelSpotOrder
         {
             var order = await _spotOrderRepository.GetByIdAsync(request.OrderId);
             if (order is null)
-                return Result.Failure(OrderErrors.OrderNotFound);
+                return Result.Failure(SpotOrderErrors.SpotOrderNotFound);
 
             var cancelOrderResult = order.CancelOrder();
             if (!cancelOrderResult.IsSuccess)

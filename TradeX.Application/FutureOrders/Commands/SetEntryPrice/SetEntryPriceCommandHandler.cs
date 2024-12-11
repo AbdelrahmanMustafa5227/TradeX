@@ -16,7 +16,6 @@ namespace TradeX.Application.FutureOrders.Commands.SetEntryPrice
 {
     internal class SetEntryPriceCommandHandler : ICommandHandler<SetEntryPriceCommand>
     {
-        private readonly ICryptoRepository _cryptoRepository;
         private readonly IUserRepository _userRepository;
         private readonly IFutureOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -25,9 +24,8 @@ namespace TradeX.Application.FutureOrders.Commands.SetEntryPrice
         private readonly ISubscriptionRepository _subscriptionRepository;
 
 
-        public SetEntryPriceCommandHandler(ICryptoRepository cryptoRepository, IUserRepository userRepository, IFutureOrderRepository orderRepository, IUnitOfWork unitOfWork, CalculateOrderDomainService calculateOrderDomainService, IDateTimeProvider dateTimeProvider, ISubscriptionRepository subscriptionRepository)
+        public SetEntryPriceCommandHandler(IUserRepository userRepository, IFutureOrderRepository orderRepository, IUnitOfWork unitOfWork, CalculateOrderDomainService calculateOrderDomainService, IDateTimeProvider dateTimeProvider, ISubscriptionRepository subscriptionRepository)
         {
-            _cryptoRepository = cryptoRepository;
             _userRepository = userRepository;
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
@@ -40,7 +38,7 @@ namespace TradeX.Application.FutureOrders.Commands.SetEntryPrice
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
             if (order is null)
-                return Result.Failure(OrderErrors.OrderNotFound);
+                return Result.Failure(FutureOrderErrors.OrderNotFound);
 
             var user = await _userRepository.GetByIdAsync(order.UserId);
             if (user == null)
@@ -50,23 +48,24 @@ namespace TradeX.Application.FutureOrders.Commands.SetEntryPrice
             if (subscription is null)
                 return Result.Failure(SubscriptionErrors.SubscriptionNotFound);
 
-            var ModifyOrderResult = order.SetEntryPrice(request.EntryPrice);
-            if (!ModifyOrderResult.IsSuccess)
-                return ModifyOrderResult;
-
-            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(order, subscription, _dateTimeProvider.UtcNow);
+            
+            var orderDetails = _calculateOrderDomainService.CalculateOrderDetails(request.EntryPrice , order.Amount, subscription, _dateTimeProvider.UtcNow);
 
 
-
-            bool canAfford = user.CanAffordOrder(order, orderDetails);
-            if (!canAfford)
+            if (!user.CanAffordOrder(orderDetails))
                 return Result.Failure(UserErrors.NoEnoughFunds);
 
-            order.UpdatePricing(orderDetails);
+            if (subscription.GetTradingVolumeLimit(_dateTimeProvider.UtcNow) < subscription.ComulativeTradingVolume24H + orderDetails.Volume)
+                return Result.Failure(SubscriptionErrors.ExceededDailyTradingVolumeLimit);
 
-            await _orderRepository.Update(order);
+
+            var SetEntryPriceResult = order.SetEntryPrice(request.EntryPrice , orderDetails);
+            if (SetEntryPriceResult.IsFailure)
+                return SetEntryPriceResult;
+
+
             await _unitOfWork.SaveChangesAsync();
-            return ModifyOrderResult;
+            return SetEntryPriceResult;
         }
     }
 }

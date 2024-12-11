@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TradeX.Application.FutureOrders.Commands.CancelOrder
+namespace TradeX.Application.SpotOrders.Commands.ExecuteLimitOrder
 {
-    internal record CancelOrderCommand (Guid OrderId): ICommand
+    public record ExecuteLimitOrderCommand (Guid OrderId) : ICommand
     {
     }
 }

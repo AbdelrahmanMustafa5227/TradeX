@@ -14,39 +14,30 @@ using TradeX.Domain.Users;
 
 namespace TradeX.Application.FutureOrders.Commands.OpenOrder
 {
-    internal class OpenOrderCommandHandler : ICommandHandler<OpenOrderCommand>
+    internal class OpenFutureOrderCommandHandler : ICommandHandler<OpenFutureOrderCommand>
     {
         private readonly IFutureOrderRepository _orderRepository;
-        private readonly ICryptoRepository _cryptoRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly CalculateOrderDomainService _calculateOrderDomainService;
 
-        public OpenOrderCommandHandler(IFutureOrderRepository orderRepository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider, CalculateOrderDomainService calculateOrderDomainService, ICryptoRepository cryptoRepository, IUserRepository userRepository, ISubscriptionRepository subscriptionRepository)
+        public OpenFutureOrderCommandHandler(IFutureOrderRepository orderRepository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider)
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
             _dateTimeProvider = dateTimeProvider;
-            _calculateOrderDomainService = calculateOrderDomainService;
-            _cryptoRepository = cryptoRepository;
-            _userRepository = userRepository;
-            _subscriptionRepository = subscriptionRepository;
         }
 
-        public async Task<Result> Handle(OpenOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(OpenFutureOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
             if (order == null)
-                return Result.Failure(OrderErrors.OrderNotFound);
+                return Result.Failure(FutureOrderErrors.OrderNotFound);
 
 
             var result = order.OpenOrder(_dateTimeProvider.UtcNow);
             if(!result.IsSuccess)
                 return result;
 
-            await _orderRepository.Update(order);
             await _unitOfWork.SaveChangesAsync();
             return result;
         }

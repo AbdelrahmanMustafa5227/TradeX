@@ -33,6 +33,10 @@ namespace TradeX.Domain.Cryptos
             return new Crypto(Guid.NewGuid() , name , symbol , price , totalSupply);
         }
 
+        public void UpdatePrice(decimal newPrice)
+        {
+            Price += newPrice;
+        }
 
 #pragma warning disable
         private Crypto() { }

@@ -55,5 +55,13 @@ namespace TradeX.Api.Controllers.SpotOrders
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
+
+        [HttpPost("execute")]
+        public async Task<IActionResult> ExecuteLimitOrder(ExecuteLimitOrderRequest request)
+        {
+            var command = request.ToCommand();
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? Ok() : BadRequest(result.Error);
+        }
     }
 }

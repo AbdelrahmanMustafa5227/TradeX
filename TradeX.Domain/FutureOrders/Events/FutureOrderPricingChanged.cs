@@ -7,7 +7,7 @@ using TradeX.Domain.Abstractions;
 
 namespace TradeX.Domain.FutureOrders.Events
 {
-    internal record FutureOrderPricingChanged(decimal oldPrice , FutureOrder order) : IDomainEvent
+    public record FutureOrderPricingChanged(decimal OldTotal , FutureOrder Order) : IDomainEvent
     {
     }
 }

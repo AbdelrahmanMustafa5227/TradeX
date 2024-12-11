@@ -7,7 +7,7 @@ using TradeX.Domain.FutureOrders;
 
 namespace TradeX.Application.FutureOrders.Commands.CreateMarketFutureOrder
 {
-    internal record CreateMarketFutureOrderCommand(Guid UserId, Guid CryptoId, FutureOrderType OrderType, decimal EntryPrice, decimal Amount) : ICommand
+    public record CreateMarketFutureOrderCommand(Guid UserId, Guid CryptoId, FutureOrderType OrderType, decimal Amount) : ICommand
     {
     }
 }

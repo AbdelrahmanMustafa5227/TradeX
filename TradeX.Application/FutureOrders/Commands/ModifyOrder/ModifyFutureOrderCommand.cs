@@ -7,7 +7,7 @@ using TradeX.Domain.FutureOrders;
 
 namespace TradeX.Application.FutureOrders.Commands.ModifyOrder
 {
-    internal record ModifyOrderCommand (Guid OrderId, FutureOrderType OrderType , decimal Amount , decimal EntryPrice ) : ICommand
+    public record ModifyFutureOrderCommand (Guid OrderId, decimal Amount) : ICommand
     {
 
     }
