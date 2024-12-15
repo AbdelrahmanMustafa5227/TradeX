@@ -19,8 +19,4 @@
     <ProjectReference Include="..\TradeX.Infrastructure\TradeX.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="GLobalExceptionHandler\" />
-  </ItemGroup>
-
 </Project>

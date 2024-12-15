@@ -12,6 +12,9 @@ namespace TradeX.Infrastructure.Services
         private readonly Random _random = new();
         private readonly List<int> _directions = [1, -1];
 
+        private const decimal minMagnitude = 1;
+        private const decimal maxMagnitude = 2;
+
         public int GetDirection()
         {
             return _directions[_random.Next(0, _directions.Count)];
@@ -19,7 +22,7 @@ namespace TradeX.Infrastructure.Services
 
         public decimal GetMagnitude()
         {
-            return _random.Next(1, 4);
+            return (decimal)_random.NextDouble() * (maxMagnitude - minMagnitude) + minMagnitude;
         }
     }
 }

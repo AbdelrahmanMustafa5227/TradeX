@@ -16,6 +16,11 @@ namespace TradeX.Infrastructure.Persistance.Repositories
 
         }
 
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            return await DbSet.FirstOrDefaultAsync(x => x.Email == email);
+        }
+
         public async Task<bool> IsEmailUnique(string email)
         {
             return !await DbSet.AnyAsync(x => x.Email == email);

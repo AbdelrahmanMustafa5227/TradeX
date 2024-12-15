@@ -28,6 +28,10 @@ namespace TradeX.Infrastructure.BackgroundJobs
             .AddTrigger(configure => configure.ForJob(nameof(SpotOrderExecutioner))
             .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(2).RepeatForever()));
 
+            options.AddJob<FutureOrderExecutioner>(configure => configure.WithIdentity(nameof(FutureOrderExecutioner)))
+            .AddTrigger(configure => configure.ForJob(nameof(FutureOrderExecutioner))
+            .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(2).RepeatForever()));
+
 
             options.AddJob<OutboxJob>(configure => configure.WithIdentity(nameof(OutboxJob)))
             .AddTrigger(configure => configure.ForJob(nameof(OutboxJob))

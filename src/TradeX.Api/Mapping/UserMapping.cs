@@ -1,7 +1,10 @@
 ﻿using TradeX.Api.Controllers.Users;
+using TradeX.Application.Authentication.Refresh;
+using TradeX.Application.Authentication.Revoke;
 using TradeX.Application.Users.Commands.ConfirmKYC;
 using TradeX.Application.Users.Commands.CreateUser;
 using TradeX.Application.Users.Commands.Deposit;
+using TradeX.Application.Users.Commands.Login;
 using TradeX.Application.Users.Commands.SetSubsciption;
 using TradeX.Application.Users.Commands.Transfer;
 
@@ -18,6 +21,32 @@ namespace TradeX.Api.Mapping
                  request.email,
                  request.password,
                  request.paymentMethod
+            );
+        }
+
+        public static LoginCommand ToCommand(this LoginRequest request)
+        {
+            return new LoginCommand
+            (
+                 request.Email,
+                 request.Password
+            );
+        }
+
+        public static RefreshCommand ToCommand(this RefreshRequest request)
+        {
+            return new RefreshCommand
+            (
+                 request.AccessToken,
+                 request.RefreshToken
+            );
+        }
+
+        public static RevokeCommand ToCommand(this RevokeRequest request)
+        {
+            return new RevokeCommand
+            (
+                 request.UserId
             );
         }
 

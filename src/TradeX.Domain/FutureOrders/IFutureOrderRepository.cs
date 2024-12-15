@@ -19,9 +19,7 @@ namespace TradeX.Domain.FutureOrders
 
         Task<List<FutureOrder>> GetAllOpenOrdersAsync();
 
-        Task<List<FutureOrder>> GetOpenByUserIdAsync(Guid userId);
-
-        Task<List<FutureOrder>> GetOpenByCryptoIdAsync(Guid cryptoId);
+        Task<List<FutureOrder>> GetAllLimitOrdersAsync();
 
         void Remove(FutureOrder order);
 

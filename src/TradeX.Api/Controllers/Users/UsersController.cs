@@ -25,6 +25,33 @@ namespace TradeX.Api.Controllers.Users
             return result.IsSuccess ?  Ok(result.Value) :  BadRequest(result.Error);
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequest request)
+        {
+            var command = request.ToCommand();
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken(RefreshRequest request)
+        {
+            var command = request.ToCommand();
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
+        [HttpPost("revoke")]
+        public async Task<IActionResult> RevokeToken(RevokeRequest request)
+        {
+            var command = request.ToCommand();
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess ? Ok() : BadRequest(result.Error);
+        }
+
         [HttpPost("setsub")]
         public async Task<IActionResult> SetSubscription(SetSubscriptionRequest request)
         {

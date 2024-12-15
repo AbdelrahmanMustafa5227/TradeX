@@ -66,19 +66,17 @@ namespace TradeX.Domain.FutureOrders
             return order;
         }
 
-        public Result CloseOrder(Crypto crypto, DateTime dateTime)
+        public Result CloseOrder(decimal exitPrice , DateTime dateTime)
         {
             if (!IsActive)
                 return Result.Failure(FutureOrderErrors.OrderIsNotActive);
 
-            if (CryptoId != crypto.Id)
-                return Result.Failure(FutureOrderErrors.CryptoInvalidOrNotSet);
 
-            ExitPrice = crypto.Price;
+            ExitPrice = exitPrice;
             ClosedOnUtc = dateTime;
             IsActive = false;
 
-            RaiseDomainEvent(new FutureOrderExecuted(this));
+            RaiseDomainEvent(new FutureOrderClosed(this));
             return Result.Success();
         }
 

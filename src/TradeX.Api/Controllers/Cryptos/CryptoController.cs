@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TradeX.Api.Mapping;
@@ -16,6 +17,7 @@ namespace TradeX.Api.Controllers.Cryptos
             _mediator = mediator;
         }
 
+        //[Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> Create(CreateCryptoRequest request)
         {

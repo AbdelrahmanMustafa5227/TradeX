@@ -1,4 +1,5 @@
 ﻿using Bookify.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,11 @@ using TradeX.Domain.FutureOrders;
 
 namespace TradeX.Infrastructure.Persistance.Repositories
 {
-    internal class FutureOrderRepository : Repository<FutureOrder> , IFutureOrderRepository
+    internal class FutureOrderRepository : Repository<FutureOrder>, IFutureOrderRepository
     {
         public FutureOrderRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
-            
+
         }
 
         public Task<List<FutureOrder>> GetAllByCryptoIdAsync(Guid cryptoId)
@@ -25,19 +26,16 @@ namespace TradeX.Infrastructure.Persistance.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<FutureOrder>> GetAllOpenOrdersAsync()
+        public async Task<List<FutureOrder>> GetAllLimitOrdersAsync()
         {
-            throw new NotImplementedException();
+            return await DbSet.Where(x => x.OpenedOnUtc == null).ToListAsync();
         }
 
-        public Task<List<FutureOrder>> GetOpenByCryptoIdAsync(Guid cryptoId)
+        public async Task<List<FutureOrder>> GetAllOpenOrdersAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<FutureOrder>> GetOpenByUserIdAsync(Guid userId)
-        {
-            throw new NotImplementedException();
+            return await DbSet.Where(x => x.IsActive == true &&
+                                    (x.TakeProfitPrice != null || x.StopLossPrice != null))
+                              .ToListAsync();
         }
 
         public void Remove(FutureOrder order)

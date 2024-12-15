@@ -11,6 +11,8 @@ namespace TradeX.Domain.Users
     {
         public static readonly Error UserNotFound = new Error("User", "User Not Found");
 
+        public static readonly Error InvalidCredetials = new Error("User", "Invalid Credetials");
+
         public static readonly Error EmailUsed = new Error("User", "Email is already registered");
 
         public static readonly Error KYCAlreadyConfirmed = new Error("User", "KYC Already Verified");

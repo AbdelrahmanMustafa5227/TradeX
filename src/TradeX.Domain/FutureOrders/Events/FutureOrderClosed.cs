@@ -8,7 +8,7 @@ using TradeX.Domain.FutureOrders;
 
 namespace TradeX.Domain.Orders.Events
 {
-    public record FutureOrderExecuted(FutureOrder order) : IDomainEvent
+    public record FutureOrderClosed(FutureOrder order) : IDomainEvent
     {
 
     }

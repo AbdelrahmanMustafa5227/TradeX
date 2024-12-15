@@ -37,7 +37,7 @@ namespace TradeX.Infrastructure.BackgroundJobs.Outbox
 
         public async Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation("Beginning to process outbox messages");
+            //_logger.LogInformation("Beginning to process outbox messages");
             var outboxMessages = await GetOutboxMessagesAsync();
 
             if (outboxMessages.Count > 0)
@@ -67,7 +67,7 @@ namespace TradeX.Infrastructure.BackgroundJobs.Outbox
                 transaction.Commit();
             }
 
-            _logger.LogInformation("Completed processing outbox messages");
+           //_logger.LogInformation("Completed processing outbox messages");
         }
 
         private Task<List<OutboxMessage>> GetOutboxMessagesAsync()

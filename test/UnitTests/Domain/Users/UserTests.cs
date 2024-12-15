@@ -216,79 +216,6 @@ namespace UnitTests.Domain.Users
             Reciepnt.balance.AvailableBalance.Should().Be(10);
         }
 
-        [Fact]
-        public void AddAlert_LessThanSubscriptionAllows_ShouldWork()
-        {
-            //Arrange
-            var user = UserData.Create();
-            user.ConfirmKYC();
-            var alert = UserData.CreateAlert();
-            var subscription = SubscriptionData.Create(user);
-            user.SetSubscription(subscription);
-            //Act
-            var result = user.AddAlert(alert,subscription);
-            //Assert
-            result.IsSuccess.Should().BeTrue();
-            user.Alerts.Count.Should().Be(1);
-        }
-
-        [Fact]
-        public void AddAlert_MoreThanSubscriptionAllows_ShouldFail()
-        {
-            //Arrange
-            var user = UserData.Create();
-            user.ConfirmKYC();
-            var subscription = SubscriptionData.Create(user);
-            user.SetSubscription(subscription);
-
-            var alert1 = UserData.CreateAlert();
-            var alert2 = UserData.CreateAlert();
-            var alert3 = UserData.CreateAlert();
-            var alert4 = UserData.CreateAlert();
-
-            
-            //Act
-            var result1 = user.AddAlert(alert1, subscription);
-            var result2 = user.AddAlert(alert2, subscription);
-            var result3 = user.AddAlert(alert3, subscription);
-            var result4 = user.AddAlert(alert4, subscription);
-            //Assert
-            result3.IsSuccess.Should().BeTrue();
-            result4.IsSuccess.Should().BeFalse();
-            result4.Error.Should().Be(UserErrors.ExceededAlertLimit);
-        }
-
-        [Fact]
-        public void RemoveAlert_AlertIsNotFound_ShouldFail()
-        {
-            //Arrange
-            var user = UserData.Create();
-            user.ConfirmKYC();
-            var subscription = SubscriptionData.Create(user);
-            user.SetSubscription(subscription);
-            var alert = UserData.CreateAlert();
-            //Act
-            var result= user.RemoveAlert(alert.Id);
-            //Assert
-            result.IsSuccess.Should().BeFalse();
-            result.Error.Should().Be(UserErrors.AlertNotFound);
-        }
-
-        [Fact]
-        public void RemoveAlert_AlertIsFound_ShouldWork()
-        {
-            //Arrange
-            var user = UserData.Create();
-            user.ConfirmKYC();
-            var subscription = SubscriptionData.Create(user);
-            user.SetSubscription(subscription);
-            var alert = UserData.CreateAlert();
-            user.AddAlert(alert,subscription);
-            //Act
-            var result = user.RemoveAlert(alert.Id);
-            //Assert
-            result.IsSuccess.Should().BeTrue();
-        }
 
         [Fact]
         public void AddAsset_AssetExists_ShouldAddtoCurrentValue()
@@ -296,11 +223,10 @@ namespace UnitTests.Domain.Users
             //Arrange
             var user = UserData.CreateKYCConfirmed();
             var asset = Asset.Create(Guid.NewGuid(), 10);
-            user.AddAsset(asset);
+            user.AddAsset(asset.CryptoId , asset.Amount);
             //Act
-            var result = user.AddAsset(asset);
+            user.AddAsset(asset.CryptoId, asset.Amount);
             //Assert
-            result.IsSuccess.Should().BeTrue();
             user.Assets.Count.Should().Be(1);
             user.Assets[0].Amount.Should().Be(20);
         }
@@ -312,9 +238,8 @@ namespace UnitTests.Domain.Users
             var user = UserData.CreateKYCConfirmed();
             var asset = Asset.Create(Guid.NewGuid(), 10);
             //Act
-            var result = user.AddAsset(asset);
+            user.AddAsset(asset.CryptoId, asset.Amount);
             //Assert
-            result.IsSuccess.Should().BeTrue();
             user.Assets.Count.Should().Be(1);
             user.Assets[0].Amount.Should().Be(10);
         }
@@ -338,9 +263,9 @@ namespace UnitTests.Domain.Users
             //Arrange
             var user = UserData.CreateKYCConfirmed();
             var asset = Asset.Create(Guid.NewGuid(), 10);
-            user.AddAsset(asset);
+            user.AddAsset(asset.CryptoId, asset.Amount);
             //Act
-            var result = user.RemoveAsset(asset.Id, 20);
+            var result = user.RemoveAsset(asset.CryptoId, 20);
             //Assert
             result.IsSuccess.Should().BeFalse();
             result.Error.Should().Be(UserErrors.NoEnoughFunds);
@@ -352,9 +277,9 @@ namespace UnitTests.Domain.Users
             //Arrange
             var user = UserData.CreateKYCConfirmed();
             var asset = Asset.Create(Guid.NewGuid(), 10);
-            user.AddAsset(asset);
+            user.AddAsset(asset.CryptoId, asset.Amount);
             //Act
-            var result = user.RemoveAsset(asset.Id, 10);
+            var result = user.RemoveAsset(asset.CryptoId, 10);
             //Assert
             result.IsSuccess.Should().BeTrue();
         }

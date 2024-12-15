@@ -42,7 +42,7 @@ namespace UnitTests.Domain.Users
 
         public static Alert CreateAlert()
         {
-            return Alert.Create(Guid.NewGuid(), 100, true);
+            return Alert.Create(Guid.NewGuid(), 100);
         }
     }
 }

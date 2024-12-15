@@ -14,7 +14,7 @@ namespace TradeX.Infrastructure.BackgroundJobs
 {
     internal class SpotOrderExecutioner : IJob
     {
-        private const decimal tolerance = 0.0031m;
+        private const decimal tolerance = 0.002m;
 
         private readonly ISpotOrderRepository _spotOrderRepository;
         private readonly ICryptoRepository _cryptoRepository;
