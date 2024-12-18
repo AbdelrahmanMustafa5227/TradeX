@@ -23,7 +23,7 @@ namespace TradeX.Application.Authentication.Revoke
         public async Task<Result> Handle(RevokeCommand request, CancellationToken cancellationToken)
         {
             if (_userContext.UserId != request.UserId)
-                return Result.Failure(new Error("Auth" , "You Can't do this operation"));
+                return Result.Failure(new Error("Auth" , "You aren't allowed to do this operation"));
 
             await _jwtTokenProvider.Revoke(request.UserId);
             return Result.Success();

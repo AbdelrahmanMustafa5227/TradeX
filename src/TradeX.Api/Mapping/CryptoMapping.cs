@@ -1,5 +1,6 @@
 ﻿using TradeX.Api.Controllers.Cryptos;
 using TradeX.Application.Cryptos.Commands.CreateCrypto;
+using TradeX.Application.Cryptos.Queries.GetAll;
 
 namespace TradeX.Api.Mapping
 {
@@ -15,5 +16,14 @@ namespace TradeX.Api.Mapping
                 request.TotalSupply
             );
         }
+
+        //public static GetAllCryptosQuery ToQuery(this GetAllCryptosRequest request)
+        //{
+        //    return new GetAllCryptosQuery
+        //    (
+        //        request.Search
+        //        req
+        //    );
+        //}
     }
 }

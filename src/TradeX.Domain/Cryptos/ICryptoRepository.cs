@@ -17,6 +17,6 @@ namespace TradeX.Domain.Cryptos
 
         void Add(Crypto crypto);
 
-        Task<List<Crypto>> GetAllAsync();
+        IQueryable<Crypto> GetAllAsync(string? searchTerm = null , string? OrderBy = null);
     }
 }

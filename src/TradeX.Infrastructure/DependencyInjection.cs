@@ -36,6 +36,7 @@ namespace TradeX.Infrastructure
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IDateTimeProvider, DateTimeProvider>();
             services.AddScoped<IRandomNumberProvider, RandomNumberProvider>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 
             services.AddScoped<IUserRepository, UserRepository>();

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradeX.Application.Shared;
 using TradeX.Domain.Abstractions;
 using TradeX.Domain.Cryptos;
 using TradeX.Infrastructure.Abstractions;
@@ -30,13 +31,13 @@ namespace TradeX.Infrastructure.BackgroundJobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var cryptos = await _cryptoRepository.GetAllAsync();
+            var cryptos = _cryptoRepository.GetAllAsync();
 
             foreach (var crypto in cryptos)
             {
                 var newPrice = crypto.Price * PriceJump * _randomNumberProvider.GetDirection() * _randomNumberProvider.GetMagnitude();
                 crypto.UpdatePrice(newPrice);
-                _logger.LogInformation($"Crypto : {crypto.Symbol} --- Price : {crypto.Price}");
+                _logger.LogInformation(LogEvents.CryptoPriceUpdatedEvent,"Crypto : {Symbol} --- Price : {Price}", crypto.Symbol, Math.Round(crypto.Price,5));
             }
 
             await _unitOfWork.SaveChangesAsync();

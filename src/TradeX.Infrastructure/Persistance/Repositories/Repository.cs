@@ -20,6 +20,11 @@ internal abstract class Repository<T> where T : Entity
         return await DbSet.FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<List<T>> GetAll()
+    {
+        return await DbSet.ToListAsync();
+    }
+
     public void Add(T entity)
     {
         DbSet.Add(entity);
