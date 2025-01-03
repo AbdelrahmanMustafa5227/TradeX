@@ -38,3 +38,12 @@ The system automatically monitors the price changes and executes orders when the
 -  Unit Tests Using (XUnit, NSubstitute, Fluent Assertions, Bogus)
 -  Integration Tests
 
+## Postman Collection
+
+The Postman collection for this project is available in the `postman` folder.
+
+### How to Import
+1. Open Postman.
+2. Click **Import** in the top left.
+3. Select the file.
+4. Use the collection for testing the API.
