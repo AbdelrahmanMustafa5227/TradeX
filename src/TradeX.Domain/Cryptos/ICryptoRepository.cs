@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradeX.Domain.Shared;
 using TradeX.Domain.Users;
 
 namespace TradeX.Domain.Cryptos
@@ -17,6 +18,8 @@ namespace TradeX.Domain.Cryptos
 
         void Add(Crypto crypto);
 
-        IQueryable<Crypto> GetAllAsync(string? searchTerm = null , string? OrderBy = null);
+        Task<PaginatedList<Crypto>> GetAllAsync(int page = 1, int pageSize = 0);
+
+        Task<PaginatedList<Crypto>> FilterAsync(string searchTerm , string? OrderBy = null , int page = 1, int pageSize = 0);
     }
 }

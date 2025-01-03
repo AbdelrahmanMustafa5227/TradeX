@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TradeX.Domain.Cryptos;
+using TradeX.Domain.Shared;
 
 namespace TradeX.Domain.Subscriptions
 {
@@ -15,7 +16,7 @@ namespace TradeX.Domain.Subscriptions
 
         Task<Subscription?> GetByUserIdAsync(Guid userId);
 
-        Task<List<Subscription>> GetAllAsync();
+        Task<PaginatedList<Subscription>> GetAllAsync(int page = 1, int pageSize = 0);
 
         void ZeriongAll();
 

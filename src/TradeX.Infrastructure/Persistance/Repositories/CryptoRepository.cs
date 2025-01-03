@@ -8,6 +8,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using TradeX.Domain.Cryptos;
+using TradeX.Domain.Shared;
+using TradeX.Infrastructure.Persistance.Extensions;
 
 namespace TradeX.Infrastructure.Persistance.Repositories
 {
@@ -18,13 +20,11 @@ namespace TradeX.Infrastructure.Persistance.Repositories
 
         }
 
-        public IQueryable<Crypto> GetAllAsync(string? searchTerm = null, string? OrderBy = null)
+        public async Task<PaginatedList<Crypto>> FilterAsync(string searchTerm, string? OrderBy = null, int page = 1, int pageSize = 0)
         {
             IQueryable<Crypto> query = DbSet.AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(searchTerm))
-                query = query.Where(x => x.Symbol.Contains(searchTerm));
-
+            query = query.Where(x => x.Symbol.Contains(searchTerm));
 
             if (!string.IsNullOrWhiteSpace(OrderBy))
             {
@@ -36,8 +36,8 @@ namespace TradeX.Infrastructure.Persistance.Repositories
 
                 query = query.OrderBy(KeySelector);
             }
-                
-            return query;
+
+            return await query.GetPaginationAsync(page, pageSize);
         }
 
         public async Task<Crypto?> GetBySymbolAsync(string symbol)

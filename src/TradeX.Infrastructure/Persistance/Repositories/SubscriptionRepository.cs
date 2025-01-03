@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TradeX.Domain.Shared;
 using TradeX.Domain.Subscriptions;
 
 namespace TradeX.Infrastructure.Persistance.Repositories
@@ -14,12 +15,7 @@ namespace TradeX.Infrastructure.Persistance.Repositories
         public SubscriptionRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
             
-        }
-
-        public async Task<List<Subscription>> GetAllAsync()
-        {
-            return await DbSet.ToListAsync();
-        }
+        }  
 
         public async Task<Subscription?> GetByUserIdAsync(Guid userId)
         {

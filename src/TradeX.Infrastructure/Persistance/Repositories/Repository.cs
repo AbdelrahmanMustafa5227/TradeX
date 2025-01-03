@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TradeX.Domain.Abstractions;
+using TradeX.Domain.Shared;
 using TradeX.Infrastructure.Persistance;
+using TradeX.Infrastructure.Persistance.Extensions;
 
 namespace Bookify.Infrastructure.Repositories;
 
@@ -20,9 +22,9 @@ internal abstract class Repository<T> where T : Entity
         return await DbSet.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<List<T>> GetAll()
+    public async Task<PaginatedList<T>> GetAllAsync(int page , int pageSize)
     {
-        return await DbSet.ToListAsync();
+        return await DbSet.GetPaginationAsync(page,pageSize);
     }
 
     public void Add(T entity)

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TradeX.Application.Wrappers;
 using TradeX.Domain.Abstractions;
 using TradeX.Domain.Cryptos;
+using TradeX.Domain.Shared;
 
 namespace TradeX.Application.Cryptos.Queries.GetAll
 {
-    internal class GetAllCryptosQueryHandler : IQueryHandler<GetAllCryptosQuery, List<GetAllCryptosResponse>>
+    internal class GetAllCryptosQueryHandler : IQueryHandler<GetAllCryptosQuery, PaginatedList<Crypto>>
     {
         private readonly ICryptoRepository _cryptoRepository;
 
@@ -18,20 +18,12 @@ namespace TradeX.Application.Cryptos.Queries.GetAll
             _cryptoRepository = cryptoRepository;
         }
 
-        public async Task<Result<List<GetAllCryptosResponse>>> Handle(GetAllCryptosQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PaginatedList<Crypto>>> Handle(GetAllCryptosQuery request, CancellationToken cancellationToken)
         {
-            var cryptos = _cryptoRepository.GetAllAsync(request.searchTerm , request.OrderBy)
-                .GetPaginationAsync(request.page ?? 1 , request.pageSize ?? 3);
+            var cryptos = await _cryptoRepository.FilterAsync(request.searchTerm, request.OrderBy , request.page , request.pageSize);
 
-            var response = new List<GetAllCryptosResponse>();
-
-            foreach (var crypto in cryptos)
-            {
-                response.Add(new GetAllCryptosResponse(crypto.Name, crypto.Symbol, crypto.Price));
-            }
-
-            await Task.CompletedTask;
-            return response;
+           
+            return cryptos;
         }
     }
 }

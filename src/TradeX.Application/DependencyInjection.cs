@@ -22,6 +22,7 @@ namespace TradeX.Application
 
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
             services.AddTransient<CalculateOrderDomainService>();
+            
             return services;
         }
     }

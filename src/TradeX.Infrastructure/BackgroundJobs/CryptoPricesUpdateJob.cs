@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using TradeX.Application.Shared;
 using TradeX.Domain.Abstractions;
 using TradeX.Domain.Cryptos;
 using TradeX.Infrastructure.Abstractions;
+using TradeX.Infrastructure.Persistance;
 
 namespace TradeX.Infrastructure.BackgroundJobs
 {
@@ -16,31 +18,35 @@ namespace TradeX.Infrastructure.BackgroundJobs
     {
         private const decimal PriceJump = 0.001m;
 
-        private readonly ICryptoRepository _cryptoRepository;
+        private readonly ApplicationDbContext _context;
         private readonly IRandomNumberProvider _randomNumberProvider;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<CryptoPricesUpdateJob> _logger;
 
-        public CryptoPricesUpdateJob(ICryptoRepository cryptoRepository, IUnitOfWork unitOfWork, IRandomNumberProvider randomNumberProvider, ILogger<CryptoPricesUpdateJob> logger)
+        public CryptoPricesUpdateJob(ApplicationDbContext context, IRandomNumberProvider randomNumberProvider, ILogger<CryptoPricesUpdateJob> logger)
         {
-            _cryptoRepository = cryptoRepository;
-            _unitOfWork = unitOfWork;
+            _context = context;
             _randomNumberProvider = randomNumberProvider;
             _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var cryptos = _cryptoRepository.GetAllAsync();
+            var cryptos = await _context.Set<Crypto>().ToListAsync();
 
             foreach (var crypto in cryptos)
             {
                 var newPrice = crypto.Price * PriceJump * _randomNumberProvider.GetDirection() * _randomNumberProvider.GetMagnitude();
                 crypto.UpdatePrice(newPrice);
-                _logger.LogInformation(LogEvents.CryptoPriceUpdatedEvent,"Crypto : {Symbol} --- Price : {Price}", crypto.Symbol, Math.Round(crypto.Price,5));
+
+
+                _logger.LogInformation(
+                LogEvents.CryptoPriceUpdatedEvent,
+                "Crypto : {Symbol} --- Price : ${Price:F4}",
+                crypto.Symbol, crypto.Price);
+
             }
 
-            await _unitOfWork.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }

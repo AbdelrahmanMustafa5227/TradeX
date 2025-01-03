@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +24,7 @@
     <Folder Include="SpotOrders\Queries\" />
     <Folder Include="Subscriptions\Queries\" />
     <Folder Include="Users\Queries\" />
+    <Folder Include="Wrappers\" />
   </ItemGroup>
 
 	<ItemGroup>

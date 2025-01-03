@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TradeX.Application.Wrappers
+namespace TradeX.Domain.Shared
 {
-    public class PaginatedList<T>
+    public class PaginatedList<T> 
     {
         private PaginatedList(List<T> items, int page, int pageSize, int totalCount)
         {
@@ -28,12 +28,9 @@ namespace TradeX.Application.Wrappers
 
         public bool HasPrevPage => Page > 1;
 
-        public static PaginatedList<T> CreateAsync(IQueryable<T> query, int page, int pageSize)
+        public static PaginatedList<T> CreateAsync(List<T> query, int page, int pageSize , int totalCount)
         {
-            int count = query.Count();
-            var data = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-            return new PaginatedList<T>(data, page, pageSize, count);
+            return new PaginatedList<T>(query, page, pageSize, totalCount);
         }
     }
 }

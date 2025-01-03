@@ -28,10 +28,10 @@ namespace TradeX.Api.Controllers.Cryptos
             return result.IsSuccess ? Ok() : BadRequest(result.Error);
         }
 
-        [HttpGet("All")]
-        public async Task<IActionResult> GetAll([FromQuery] string? symbol, string? orderBy, int? page, int? pageSize)
+        [HttpGet("filter")]
+        public async Task<IActionResult> Filter([FromQuery] string search, string? orderBy, int page = 1, int pageSize = 0)
         {
-            var query = new GetAllCryptosQuery(symbol, orderBy, page, pageSize);
+            var query = new GetAllCryptosQuery(search, orderBy, page, pageSize);
             var result = await _mediator.Send(query);
 
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
