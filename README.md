@@ -26,7 +26,7 @@ The system automatically monitors the price changes and executes orders when the
 -  Entity Framework Core
 -  CQRS with MediatR Pattern 
 -  Unit of Work & Repository Pattern
--  JWT Authentication
+-  JWT Authentication & Refresh Tokens
 -  Password Hashing
 -  Quartz for Background Job Processing
 -  Fluent Validation
