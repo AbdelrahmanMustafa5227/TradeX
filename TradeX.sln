@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E79667E9-4DCB-48D8-A044-02ABFFDE1BBD}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\Abdo\Desktop\TradeX.postman_collection.json = C:\Users\Abdo\Desktop\TradeX.postman_collection.json
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8ED188B1-BD30-4CA4-AC28-74A611209361}"
 EndProject
