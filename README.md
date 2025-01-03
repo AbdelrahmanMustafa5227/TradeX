@@ -27,6 +27,7 @@ The system automatically monitors the price changes and executes orders when the
 -  CQRS with MediatR Pattern 
 -  Unit of Work & Repository Pattern
 -  JWT Authentication
+-  Password Hashing
 -  Quartz for Background Job Processing
 -  Fluent Validation
 -  Manual Mapping
