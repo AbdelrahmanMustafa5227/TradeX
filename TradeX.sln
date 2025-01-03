@@ -19,11 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "test\UnitTests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "test\IntegrationTests\IntegrationTests.csproj", "{3034D618-CEFC-42CF-8462-FE03D731C070}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Postman", "Postman", "{922561AD-8369-4A08-96ED-6B12D559D5FF}"
-	ProjectSection(SolutionItems) = preProject
-		C:\Users\Abdo\Desktop\TradeX.postman_collection.json = C:\Users\Abdo\Desktop\TradeX.postman_collection.json
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

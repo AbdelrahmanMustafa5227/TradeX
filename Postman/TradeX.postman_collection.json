@@ -1,0 +1,775 @@
+{
+	"info": {
+		"_postman_id": "b1dfc665-ad6f-422c-bddf-62cf7fec9437",
+		"name": "TradeX",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39933936"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "CreateUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Tarek\",\r\n    \"lastName\": \"Ahmed\",\r\n    \"email\": \"tareg@mailcom\",\r\n    \"password\": \"123456\",\r\n    \"paymentMethod\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/users/create",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Email\": \"tarek@gmail.com\",\r\n    \"Password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/users/login",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"AccessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZDJiZTdjMy1mNGYyLTQxYTMtOGMzMC1kZTQxODgxYzExNTMiLCJzdWIiOiJmZDQ4ZWM4My1iOTAwLTRiMTgtOTUwZC0zNWM2YTRmMTBmOTEiLCJuYmYiOjE3MzQyOTMzNDAsImV4cCI6MTczNDI5MzQwMCwiaWF0IjoxNzM0MjkzMzQwLCJpc3MiOiJBYmRlbHJhaG1hbiBNdXN0YWZhIiwiYXVkIjoiQW55b25lIn0.WptXo8vSIB77iQQYQKMf9Sh7lKyDnyFsWv2AJVSG_50\",\r\n    \"RefreshToken\": \"65f160b3-35bc-4d6f-a1fb-2b79c74367b1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/users/refresh",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RevokeToken",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\": \"FD48EC83-B900-4B18-950D-35C6A4F10F91\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/users/revoke",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"revoke"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SetSubscriptiton",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\": \"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"Tier\": 1,\r\n    \"Plan\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/users/setsub",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"setsub"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ConfirmKYC",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"FD48EC83-B900-4B18-950D-35C6A4F10F91\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/users/confirm",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deposit",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"DepositAmount\": 1000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/users/deposit",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"deposit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Withdraw",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\" : \"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"Amount\" : 60\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/users/withdraw",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"withdraw"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Transfer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"SenderId\" : \"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"RecepientId\" : \"FD48EC83-B900-4B18-950D-35C6A4F10F91\",\r\n    \"Amount\" : 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/users/transfer",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"users",
+								"transfer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Crypto",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiZTRkMDZiNS01MWU4LTQ4MmEtYWQ5NS00MDVhMDc4ODM0NjkiLCJzdWIiOiJmZDQ4ZWM4My1iOTAwLTRiMTgtOTUwZC0zNWM2YTRmMTBmOTEiLCJuYmYiOjE3MzQyOTM4MjAsImV4cCI6MTczNDI5Mzg4MCwiaWF0IjoxNzM0MjkzODIwLCJpc3MiOiJBYmRlbHJhaG1hbiBNdXN0YWZhIiwiYXVkIjoiQW55b25lIn0.gw2yVspqenRPHMEAE4dySOYzfv05MNwjjqUCFG0_S6U",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\":\"tfgfhfgh\",\r\n    \"Symbol\":\"tetta\",\r\n    \"Price\": 0.0001,\r\n    \"TotalSupply\": 300000000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/cryptos/create",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"cryptos",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/cryptos/filter?search=t&orderBy=price&pageSize=5",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"cryptos",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "t"
+								},
+								{
+									"key": "orderBy",
+									"value": "price"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Spot Orders",
+			"item": [
+				{
+					"name": "CreateMarketOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"CryptoId\": \"D68E59A0-B287-45E5-8B13-389F12603A7A\",\r\n    \"orderType\" : 0,\r\n    \"Amount\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/spot/market",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"spot",
+								"market"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateLimitOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"CryptoId\": \"D68E59A0-B287-45E5-8B13-389F12603A7A\",\r\n    \"orderType\" : 0,\r\n    \"Amount\": 0.5,\r\n    \"EntryPrice\" : 246\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/spot/limit",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"spot",
+								"limit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelLimitOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrderId\":\"068CC38B-B533-48F3-90B5-4494F3D621F7\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/spot/cancel",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"spot",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ChangeEntryPrice",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrderId\": \"BA23CFA9-5694-4D64-AD02-1AF7385E8702\",\r\n    \"EntryPrice\": 50\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/spot/set-entry",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"spot",
+								"set-entry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ModifyOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrderId\": \"9DFA5243-5A23-4649-95A0-410C53E4252B\",\r\n    \"OrderType\": 1,\r\n    \"Amount\": 1.7\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/spot/modify",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"spot",
+								"modify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ExecuteOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrderId\": \"9DFA5243-5A23-4649-95A0-410C53E4252B\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/spot/execute",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"spot",
+								"execute"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subscriptions",
+			"item": [
+				{
+					"name": "AddAlert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"CryptoId\": \"D68E59A0-B287-45E5-8B13-389F12603A7A\",\r\n    \"Price\": 313\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/sub/add-alert",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"sub",
+								"add-alert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RemoveAlert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"AlertId\": \"CE1B52E2-ACF1-4759-9E6C-01ACC9B5A365\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/sub/remove-alert",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"sub",
+								"remove-alert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Renew",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/sub/renew",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"sub",
+								"renew"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Future Orders",
+			"item": [
+				{
+					"name": "Create Market Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"CryptoId\": \"D68E59A0-B287-45E5-8B13-389F12603A7A\",\r\n    \"orderType\" : 0,\r\n    \"Amount\": 2.1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/future/market",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"future",
+								"market"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateLimitOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\":\"E09CF0C7-5CC7-4FD7-B899-AC9DC74A70A4\",\r\n    \"CryptoId\": \"D68E59A0-B287-45E5-8B13-389F12603A7A\",\r\n    \"orderType\" : 0,\r\n    \"EntryPrice\" : 200,\r\n    \"Amount\": 0.5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/future/limit",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"future",
+								"limit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ChangeEntryPrice",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrderId\":\"84197F5C-5B8E-462D-8FBF-399C6D41FE8E\",\r\n    \"EntryPrice\" :220\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/future/set-entry",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"future",
+								"set-entry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrderId\":\"84197F5C-5B8E-462D-8FBF-399C6D41FE8E\",\r\n    \"Amount\" : 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/future/modify",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"future",
+								"modify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change TP/SL Price",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrderId\": \"84197F5C-5B8E-462D-8FBF-399C6D41FE8E\",\r\n    \"TPPrice\": 260,\r\n    \"SLPrice\": 240\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/future/set-tpsl",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"future",
+								"set-tpsl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrderId\":\"7E8AF540-1AC1-4611-BD86-2186F9926DD9\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/future/cancel",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"future",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Open Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrderId\":\"F475DA6E-66D2-49F0-80BA-4843DF011971\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/future/open",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"future",
+								"open"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
